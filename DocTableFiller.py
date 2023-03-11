@@ -24,14 +24,15 @@ def fill_table_from_excel(excel_filename, doc_filename, start_row, row_count):
         if any(row):
             # Add a new row to the table
             new_row = table.add_row()
+            variables = {val: row[i] for i, val in enumerate(tmp_excel_positions)}
 
             # Loop through the cells in the new row and replace the temporary words with the data from Excel
             for i, xpos in enumerate(tmp_word_positions):
-                if xpos == tmp_word_positions[i]:
-                    tmp_word = header_row.cells[i].text
-                    p = tmp_excel_positions.index(tmp_word)
-                    new_value = str(row[p])
-                    new_row.cells[i].text = new_value.replace(tmp_word, "").strip()
+                # beautify kuotas
+                clearxpos = xpos.replace(u'\u2018', "'").replace(u'\u2019', "'").replace(u'\u201C', '"').replace(u'\u201D', '"')
+                z = eval(clearxpos, variables)
+                new_value = z
+                new_row.cells[i].text = new_value.replace(xpos, "").strip()
 
     # Save the modified Word document
     doc.save("0" + doc_filename)
